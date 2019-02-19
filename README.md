@@ -5,7 +5,7 @@
 The Plugin provides private Cameras in the local network for Amazon devices like Echo Show / Echo Spot / FireTV. The reqirements of Amazon for cameras are :
 
 - encrypted Connection via TLSv1.2
-- use a officiel certificate (not self signed)
+- use an officiel certificate (not self signed)
 - using Port 443
 
 So it´s not possible to use private Cameras without any Cheats
