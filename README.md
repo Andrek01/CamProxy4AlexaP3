@@ -1,4 +1,4 @@
-# CamProxy4AlexaP3 - Version 1.0.0.0
+# CamProxy4AlexaP3 - Version 1.0.0
 
 ##What the Plugin do :
 
@@ -16,7 +16,7 @@ This plugin will fix this problem
 
 ## Change-Log
 
-#### 2018.01.26 - Approach version 1.0.0.0
+#### 2018.01.26 - lauch of Version 1.0.0
 
 - Alpha Version for tests distributed
 
@@ -43,17 +43,19 @@ Nothing special needed, see Needed software
 ##<span style="color:red">**!! Needed Access for the ProxyCam4AlexaP3 on Port 443 !!**</span>
 
 <span style="color:red">**You have to give the Plugin access to Port 443. To do this you have to give Python permissions to bind privileged ports without root access.To setup this run the following command.It´s not allowed to Bind Symlinks. So after a update of the used Python version you have to do this again.(Python3 -> Symlink to python 3.5 after Update Python3 -> Symlink to python 3.6)**</span>
-###<span style="color:red">**=================================================**</span>
+
+##<span style="color:red">**=================================================**</span>
 <pre><code>sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/python3.5
 </code></pre>
-###<span style="color:red">**=================================================**</span>
-### Supported Hardware
+##<span style="color:red">**=================================================**</span>
 
-* all the supports SmartHomeNG
+## Supported Hardware
+
+* all that is supported by SmartHomeNG
 
 ## Configuration
 
-### plugin.yaml
+## plugin.yaml
 
 The plugin has the following paramters in the plugin.yaml
 
@@ -76,10 +78,10 @@ video_buffer : Size for the Videobuffer for streaming. Standard is 524280 bytes.
 
 Please try out what value fits to your setup and Cam´s.
 
-### items.yaml
+## items.yaml
 
 No items or attributes have to be defined. On Startup the Plugin generates the needed attributes based on the attributes of the Alexpa4P3-Plugin.
 
 
-#### In my point of view, no further description is needed
+In my point of view, no further description is needed
 
