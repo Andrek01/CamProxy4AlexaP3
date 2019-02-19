@@ -1,4 +1,4 @@
-Server socket is dead# CamProxy4AlexaP3 - Version 1.0.0
+# CamProxy4AlexaP3 - Version 1.0.0
 
 ## What the Plugin do :
 
