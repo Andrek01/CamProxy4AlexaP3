@@ -1,4 +1,4 @@
-# CamProxy4AlexaP3 - Version 1.0.0
+Server socket is dead# CamProxy4AlexaP3 - Version 1.0.0
 
 ## What the Plugin do :
 
@@ -71,7 +71,9 @@ CamProxy4AlexaP3:
 ```
 
 cert_path : File with your fullchain.pem for the URL where you want to reach your  proxied cameras
+
 cert_path_key : File with your privkey.pem for the URL.
+
 video_buffer : Size for the Videobuffer for streaming. Standard is 524280 bytes. My experience was :
 - too small buffer, you have to wait a long time till the streamm starts
 - too big buffer, the streams sometimes wait for the data
