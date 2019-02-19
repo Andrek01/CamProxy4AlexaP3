@@ -8,8 +8,8 @@ The Plugin provides private Cameras in the local network for Amazon devices like
 - use an officiel certificate (not self signed)
 - using Port 443
 
-So it´s not possible to use private Cameras without any Cheats
-This plugin will fix this problem
+So it´s not possible to use private cameras (on local networks) without any cheats,
+this plugin will fix this problem
 
 ## How it works:
 
