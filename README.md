@@ -44,7 +44,7 @@ Nothing special needed, see Needed software
 
 <span style="color:red">**You have to give the Plugin access to Port 443. To do this you have to give Python permissions to bind privileged ports without root access.To setup this run the following command.It´s not allowed to Bind Symlinks. So after a update of the used Python version you have to do this again.(Python3 -> Symlink to python 3.5 after Update Python3 -> Symlink to python 3.6)**</span>
 
-##<span style="color:red">**=================================================**</span>
+## <span style="color:red">**=================================================**</span>
 <pre><code>sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/python3.5
 </code></pre>
 ## <span style="color:red">**=================================================**</span>
