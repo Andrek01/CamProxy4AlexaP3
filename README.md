@@ -1,6 +1,6 @@
 # CamProxy4AlexaP3 - Version 1.0.0
 
-##What the Plugin do :
+## What the Plugin do :
 
 The Plugin provides private Cameras in the local network for Amazon devices like Echo Show / Echo Spot / FireTV. The reqirements of Amazon for cameras are :
 
@@ -11,7 +11,7 @@ The Plugin provides private Cameras in the local network for Amazon devices like
 So it´s not possible to use private Cameras without any Cheats
 This plugin will fix this problem
 
-##How it works:
+## How it works:
 
 
 ## Change-Log
@@ -40,14 +40,14 @@ Nothing special needed, see Needed software
 * Portforwarding on your router for Port 443 to your SmartHomeNG machine
 
 
-##<span style="color:red">**!! Needed Access for the ProxyCam4AlexaP3 on Port 443 !!**</span>
+## <span style="color:red">**!! Needed Access for the ProxyCam4AlexaP3 on Port 443 !!**</span>
 
 <span style="color:red">**You have to give the Plugin access to Port 443. To do this you have to give Python permissions to bind privileged ports without root access.To setup this run the following command.It´s not allowed to Bind Symlinks. So after a update of the used Python version you have to do this again.(Python3 -> Symlink to python 3.5 after Update Python3 -> Symlink to python 3.6)**</span>
 
 ##<span style="color:red">**=================================================**</span>
 <pre><code>sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/python3.5
 </code></pre>
-##<span style="color:red">**=================================================**</span>
+## <span style="color:red">**=================================================**</span>
 
 ## Supported Hardware
 
@@ -63,8 +63,8 @@ The plugin has the following paramters in the plugin.yaml
 CamProxy4AlexaP3:
     class_name: CamProxy4AlexaP3
     class_path: plugins.camproxy4alexap3
-    # port: 443
-    # video_buffer: 524280
+    # port: 443 (optional)
+    # video_buffer: 524280 (optional)
     # 262140 / 524280 / 1048560 try what fits to your cameras
     cert_path: '/etc/letsencrypt/live/<your.domain.net>/fullchain.pem'
     cert_path_key: '/etc/letsencrypt/live/<your.domain.net>/privkey.pem'
