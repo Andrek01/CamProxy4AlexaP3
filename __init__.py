@@ -24,7 +24,13 @@
 import os
 import sys
 import time
-#from sys import exc_clear
+from symbol import except_clause
+
+from datetime import datetime
+from builtins import Exception
+from time import mktime
+from datetime import timedelta
+
 
 
 
@@ -55,7 +61,7 @@ class CamProxy4AlexaP3(SmartPlugin):
         self.cams = CamDevices()
         self.ClientThreads = []
         self.service = ThreadedServer(self.logger, port, video_buffer, cert_path, cert_path_key,self.cams,self.ClientThreads)
-        self.service.name = 'CamProxy4AlexaP3Instance'
+        self.service.name = 'CamProxy4AlexaP3-Handler'
         # Status No. Todo
         # open    0. - make Threads stable
         # done    1. - Build a Class-Structure for Camera´s with traffic, last used, last client, active client
@@ -105,18 +111,20 @@ class CamProxy4AlexaP3(SmartPlugin):
         while self.alive:
             if len(self.ClientThreads ) > 0:
                 for t in self.ClientThreads:
-                    if t._is_stopped == True:# and t.server_url:
+                    if t.alive == False:# and t.server_url:
                         self.CloseSockets(t)
                         try:            # Save Values
                             t.actCam.proxied_bytes +=t.proxied_bytes
                             self.logger.debug("ProxyCam4AlexaP3: saved proxied Bytes")
                         except Exception as err:
-                            print(err)
+                            self.logger.debug("ProxyCam4AlexaP3: problem while saving proxied Bytes")
                         try:
+                            Threadname = t.name
                             self.ClientThreads.remove(t)
-                        except Exception as err:
-                            print(err)
-                        self.logger.debug("ProxyCam4AlexaP3: stopped Thread : not known TreadNem")
+                        except:
+                            pass
+                        
+                        self.logger.debug("ProxyCam4AlexaP3: stopped Thread : %s " % Threadname)
 
             time.sleep(2)
         # Start the Service himself
@@ -135,17 +143,18 @@ class CamProxy4AlexaP3(SmartPlugin):
         except:
             self.logger.debug("ProxyCam4AlexaP3: could not remove mysocks")
         try:
+            thread.client.shutdown(socket.SHUT_RDWR)
             thread.client.close()
             self.logger.debug("ProxyCam4AlexaP3: Client socket closed")
         except Exception as errr:
             self.logger.debug("ProxyCam4AlexaP3: Client socket already close")
-            print(err)
         try:
+            thread.server.shutdown(socket.SHUT_RDWR)
             thread.server.close()
             self.logger.debug("ProxyCam4AlexaP3: Server socket closed")
         except Exception as errr:
             self.logger.debug("ProxyCam4AlexaP3: Server socket already close")
-            print(err)
+
   
 
     def parse_item(self, item):
@@ -165,9 +174,7 @@ class CamProxy4AlexaP3(SmartPlugin):
             self.logger.debug("Plugin '{}': parse item: {}".format(self.get_fullname(), item))
         """
 
-        #self.logger.debug('Parse-Item')
-
-            
+           
         # add the needed Information to the Items, its hard to modify Items, but neccessary
         # add a attribute for each Stream if Proxy is defined
         # add a Camera for our own use for proxying it
@@ -178,17 +185,7 @@ class CamProxy4AlexaP3(SmartPlugin):
                 myStream='alexa_proxy_url-{}'.format(i)
                 if myStream in item.conf:
                     try:
-                        #camera_uri = item.conf[myStream]
-                        #camera_uri = json.loads(camera_uri)
-                        # Create a UID for this Stream
-                        #myCam = str(uuid.uuid4().hex)
-                        # Create a proxied URL for this Stream
-                        #myProxiedurl ="%s%s%s" % (item.conf['alexa_csc_proxy_uri'], '/',myCam)
-                        # Create Key for this proxied URL
-                        #myURL = 'alexa_proxied_Url-Stream-{}'.format(i)
-                        #item.conf[myURL]=myProxiedurl
-                        #item.conf['alexa_proxied_Cam_Path-{}'.format(i)]=myCam
-                        # Create Cam for this proxied URL
+
                         cam_id = item.conf[myStream]
                         
                        
@@ -308,6 +305,79 @@ class WebInterface(SmartPluginWebIf):
         self.items = Items.get_instance()
 
 
+    @cherrypy.expose
+    def thread_list_json_html(self):
+        """
+        returns a list of Threads as json structure
+        """
+        
+        thread_data = []
+        for t in self.plugin.service.ClientThreads:
+            if t.alive == True:
+                thread_dict = {
+                                'Thread' : t.name,
+                                'real_URL' : t.actCam.real_Url
+                              }
+                thread_data.append(thread_dict)
+        
+        if len(thread_data) ==0:
+            thread_dict = {
+                            'Thread' : 'No Active Thread',
+                            'real_URL' : ''
+                          }
+            thread_data.append(thread_dict)
+        return json.dumps(thread_data)
+    
+    
+    @cherrypy.expose
+    def thread_details_json_html(self, thread_name):
+        """
+        returns a detailed Informations for a camera-Thread
+        """
+        
+        
+        info_data = []
+        if thread_name != 'No Active Thread' or thread_name == '': 
+            for t in self.plugin.service.ClientThreads:
+                if t.name != thread_name:
+                    # not this Thread selected
+                    continue
+                else:
+                    # found correct Thread
+                    try:
+                        actDateTime = datetime.now()
+                        duration_sec = mktime(actDateTime.timetuple()) - mktime(t.last_Session_Start.timetuple())
+                        Session_duration = str(timedelta(seconds=duration_sec))
+                        
+                        info_data = {
+    
+                            'Name' : t.name,
+                            'Video-Buffer-Size': t.BUFF_SIZE_SERVER,
+                            'proxied_bytes' : t.proxied_bytes,
+                            'last_Session_Start' : t.last_Session_Start.strftime("%Y-%m-%d %H:%M:%S"),
+                            'Session_duration' : Session_duration,
+                            'server_url' : t.server_url,
+                            'peer' : t.peer,
+                            
+                            #Cam - Infos
+                            
+                            'Cam-ID' : t.actCam.id,
+                            'Cam-proxied_Url' : t.actCam.proxied_Url,
+                            'Cam-real_Url' : t.actCam.real_Url,
+                            'Cam-User' : t.actCam.user,
+                            'Cam-Password' : t.actCam.pwd,
+                            }
+                        break
+                    except Exception as err:
+                        print("Error from Service :",err )
+        else:
+            info_data = {
+                        'No Active Thread' : 'select a Thread on the left side'
+                        }
+            
+        return json.dumps(info_data)
+    
+    
     @cherrypy.expose
     def index(self, reload=None):
         """

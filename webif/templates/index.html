@@ -1,3 +1,6 @@
+<!-- Functions in Scripts       -->
+<script src="./static/js/thread_items.js"></script>
+<!-- Functions in Scripts       -->
 {% extends "base_plugin.html" %}
 
 {% set logo_frame = false %}
@@ -95,35 +98,19 @@
                     <div class="col" style="max-width: 50%;">
                         <div class="card">
                             <div class="card-header p-1 shng_heading">
-                                <a class="float-sm-right" href="#" onclick="reload(selectedNode.text);" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element" class="fas fa-sync"></span></a>
+                                <a class="float-sm-right" href="#" onclick="reloadThreads();" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element" class="fas fa-sync"></span></a>
                                 <strong>{{ _('Threads existing ...') }}</strong>
                             </div>
                             <div class="card-body p-1">
-                                <div id="tree" style="overflow-y: scroll;">
-                                        <!--        -->
-                                        <table class="table table-striped table-hover pluginList">
-			                        <thead>
-				                        <tr>
-					                        <th> <font size="-1">{{ _('Alexa-Item') }}</font></th>
-					                        <th style="width: 200;"><font size="-1">{{ 'Real-URL' }}</font></th>
-					                        </tr>
-			                        </thead>
-			                        <tbody>
-			                        {% for item in item_tls %} 
-				                        <tr>
-					                        <td class="py-1"><font size="-1">{{ item.conf['alexa_description'] }}</font></td>
-					                        <td class="py-1"><font size="-1">{{ item.conf['alexa_csc_uri'] }}</font></td>
-                                                                <td class="py-1"><span style="color: green" class="fas fa-play-circle"></span></td>
-				                        </tr>
-				                        <tr>
-					                        <td class="py-1"><font size="-1">{{ item.conf['alexa_description'] }}</font></td>
-					                        <td class="py-1"><font size="-1">{{ item.conf['alexa_csc_uri'] }}</font></td>
-                                                                <td class="py-1"><span style="color: green" class="fas fa-play-circle"></span></td>
-				                        </tr>
-			                        {% endfor %}
-			                        </tbody>
-	                                </table>
-                                        <!--        -->
+                                <div class="card-text" style="">
+                                    <div id="cardOverlay" class="cardOverlay">
+                                        <div style="position: relative; top: 45%; left:45%;">
+                                            <span id="reload-element" class="fas fa-sync fa-4x"/>
+                                        </div>
+                                    </div>
+                                    <div id="threads" class="data-container refresh-data pre-scrollable" style="overflow-x: auto;">
+                                    {{ _('Threads.....') }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -131,17 +118,28 @@
                     <div class="col" style="max-width: 50%;">
                         <div class="card" >
                             <div class="card-header p-1 shng_heading">
-                                <a class="float-sm-right" href="#" onclick="reload(selectedNode.text);" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element" class="fas fa-sync"></span></a>
-                                <strong>{{ _('Thread-Details') }}</strong>
-                            </div>
+				<table>
+				<tr>
+
+				<strong align="left">{{ _('Thread-Details') }}</strong>
+
+
+
+
+
+                                <a class="float-sm-right" align="right" href="#" onclick="SelectListItem(actThreadName);" title="{{ _('Neu Laden', 'button') }}"><span id="refresh-element_details" class="fas fa-sync"></span></a>
+
+                            </tr>
+                            </table>
+			    </div>
                             <div class="card-body p-1" style="position: relative;">
                                 <div class="card-text" style="">
-                                    <div id="cardOverlay" class="cardOverlay">
+                                    <div id="cardOverlay_Details" class="cardOverlay_Details">
                                         <div style="position: relative; top: 45%; left:45%;">
-                                            <span id="reload-element" class="fas fa-sync fa-4x"/>
+                                            <span id="reload-element_details" class="fas fa-sync fa-4x"/>
                                         </div>
                                     </div>
-                                    <div id="tree_detail" class="data-container refresh-data pre-scrollable" style="overflow-x: auto;">
+                                    <div id="thread_details" class="data-container refresh-data pre-scrollable" style="overflow-x: auto;">
                                     {{ _('Details.....') }}
                                     </div>
                                 </div>
@@ -153,6 +151,25 @@
 
     </div>
 </div>
+<!-- Functions in Scripts       -->
+<script type="text/javascript" language="javascript">
+
+var actThreadName;
+
+reloadThreads();
+SelectListItem(actThreadName);
+
+$('#threads').on('click', 'tr', function()
+  {
+   var value = $(this).closest('tr').find('td').first().text();
+   //alert(value);
+   actThreadName = value;
+   SelectListItem(actThreadName);
+  });
+
+
+
+</script>
 {% endblock bodytab3 %}
 
 {% block bodytab4 %}
@@ -186,7 +203,11 @@
 </div>
 {% endblock bodytab4 %}
 
+
+
 <!--        
+				<div class="custom-control custom-checkbox" align="center" >
+
                 <td class="py-1"><span style="color: {% if p.stopped %}red{% else %}green{% endif %};" class="fas {% if p.stopped %}fa-pause-circle{% else %}fa-play-circle{% endif %}"></span></td>
 -->
 <!--        -->

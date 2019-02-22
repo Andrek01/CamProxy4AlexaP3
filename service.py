@@ -70,9 +70,19 @@ class ThreadedServer(threading.Thread):
             except Exception as err:
                 self.logger.error("ProxyCam4AlexaP3: SSL-Error - {} ".format(err))
                 pass
+
             client.settimeout(5)
  
             try:
+                # Clean up old Threads
+                for t in self.ClientThreads:
+                    if t.alive == False:
+                        try:
+                            t.actCam.proxied_bytes +=t.proxied_bytes
+                            self.ClientThreads.remove(t)
+                        except:
+                            pass
+                        
                 self.ClientThreads.append(listenProxy(conn,address,self.logger,self.Cams,self.video_buffer))
                 aktThread +=1
                 if aktThread > 99999:
@@ -80,10 +90,11 @@ class ThreadedServer(threading.Thread):
                 lastAdded = len(self.ClientThreads )-1
                 NewThreadName ="CamThread-{0:06d}".format(aktThread)
                 self.ClientThreads[lastAdded].name = NewThreadName
-                myTest ="ProxyCam4AlexaP3: Added Thread %s" % NewThreadName
-                self.logger.info(myTest)
+
+                self.logger.info("ProxyCam4AlexaP3: Added Thread %s" % NewThreadName)
                 self.ClientThreads[lastAdded].daemon = True
                 self.ClientThreads[lastAdded].start()
+
             except Exception as err:
                 self.logger.info("ProxyCam4AlexaP3: NewThreadError - {}".format(err))
             
@@ -108,6 +119,7 @@ class listenProxy(threading.Thread):
         self.proxied_bytes = 0
         self.peer = ''
         self.actCam = None
+        self.last_Session_Start = datetime.now()
 
         
     def stop(self, txtInfo = ''):
@@ -135,6 +147,8 @@ class listenProxy(threading.Thread):
         except:
             self.logger.debug("ProxyCam4AlexaP3: Problem during calculating duration-{}".format(err))
         self.alive = False
+        #self.ClientThreads.remove(self)
+        
         
         
     def run(self):
