@@ -111,7 +111,7 @@ class CamProxy4AlexaP3(SmartPlugin):
         while self.alive:
             if len(self.ClientThreads ) > 0:
                 for t in self.ClientThreads:
-                    if t.alive == False:# and t.server_url:
+                    if t.alive == False: 
                         self.CloseSockets(t)
                         try:            # Save Values
                             t.actCam.proxied_bytes +=t.proxied_bytes
@@ -314,12 +314,14 @@ class WebInterface(SmartPluginWebIf):
         thread_data = []
         for t in self.plugin.service.ClientThreads:
             if t.alive == True:
-                thread_dict = {
-                                'Thread' : t.name,
-                                'real_URL' : t.actCam.real_Url
-                              }
-                thread_data.append(thread_dict)
-        
+                try:
+                    thread_dict = {
+                                    'Thread' : t.name,
+                                    'real_URL' : t.actCam.real_Url
+                                  }
+                    thread_data.append(thread_dict)
+                except:
+                    self.logger.error('Error while build Threadlist for WebInterface')
         if len(thread_data) ==0:
             thread_dict = {
                             'Thread' : 'No Active Thread',
@@ -334,8 +336,6 @@ class WebInterface(SmartPluginWebIf):
         """
         returns a detailed Informations for a camera-Thread
         """
-        
-        
         info_data = []
         if thread_name != 'No Active Thread' or thread_name == '': 
             for t in self.plugin.service.ClientThreads:
@@ -350,7 +350,6 @@ class WebInterface(SmartPluginWebIf):
                         Session_duration = str(timedelta(seconds=duration_sec))
                         
                         info_data = {
-    
                             'Name' : t.name,
                             'Video-Buffer-Size': t.BUFF_SIZE_SERVER,
                             'proxied_bytes' : t.proxied_bytes,
@@ -370,6 +369,9 @@ class WebInterface(SmartPluginWebIf):
                         break
                     except Exception as err:
                         print("Error from Service :",err )
+                        info_data = {
+                                    'Error occured' : 'please try again'
+                                    }
         else:
             info_data = {
                         'No Active Thread' : 'select a Thread on the left side'
